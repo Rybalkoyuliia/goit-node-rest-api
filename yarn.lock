@@ -1155,6 +1155,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"nanoid@npm:^5.1.5":
+  version: 5.1.5
+  resolution: "nanoid@npm:5.1.5"
+  bin:
+    nanoid: bin/nanoid.js
+  checksum: 10c0/e6004f1ad6c7123eeb037062c4441d44982037dc043aabb162457ef6986e99964ba98c63c975f96c547403beb0bf95bc537bd7bf9a09baf381656acdc2975c3c
+  languageName: node
+  linkType: hard
+
 "negotiator@npm:0.6.3":
   version: 0.6.3
   resolution: "negotiator@npm:0.6.3"
@@ -1605,6 +1614,7 @@ __metadata:
     express: "npm:^4.18.2"
     joi: "npm:^17.11.0"
     morgan: "npm:^1.10.0"
+    nanoid: "npm:^5.1.5"
     nodemon: "npm:^3.0.2"
   languageName: unknown
   linkType: soft

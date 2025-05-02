@@ -1,22 +1,70 @@
-import express from "express";
-import {
-  getAllContacts,
-  getOneContact,
-  deleteContact,
-  createContact,
-  updateContact,
-} from "../controllers/contactsControllers.js";
+import fs from "fs/promises";
+import { nanoid } from "nanoid";
+import path from "path";
 
-const contactsRouter = express.Router();
+export const contactsPath = path.resolve("db", "contacts.json");
 
-contactsRouter.get("/", getAllContacts);
+export const listContacts = async () => {
+  const data = await fs.readFile(contactsPath, "utf-8");
+  return JSON.parse(data);
+};
 
-contactsRouter.get("/:id", getOneContact);
+export const findContactById = async (id) => {
+  const contactList = await listContacts();
+  const contact = contactList.find((contact) => contact.id === id);
+  return contact || null;
+};
 
-contactsRouter.delete("/:id", deleteContact);
+export const removeContactById = async (id) => {
+  const contactList = await listContacts();
+  const contact = contactList.find((contact) => contact.id === id);
+  if (!contact) {
+    return null;
+  }
+  const updatedList = contactList.filter((contact) => contact.id !== id);
+  await fs.writeFile(
+    contactsPath,
+    JSON.stringify(updatedList, null, 2),
+    "utf-8"
+  );
+  return contact;
+};
 
-contactsRouter.post("/", createContact);
+export const addNewContact = async (data) => {
+  const contactList = await listContacts();
+  const newContact = {
+    ...data,
+    id: nanoid(),
+  };
+  contactList.push(newContact);
+  await fs.writeFile(
+    contactsPath,
+    JSON.stringify(contactList, null, 2),
+    "utf-8"
+  );
 
-contactsRouter.put("/:id", updateContact);
+  return newContact || null;
+};
 
-export default contactsRouter;
+export const updateContact = async (id, data) => {
+  const contactList = await listContacts();
+  const contactIndex = contactList.findIndex((contact) => contact.id === id);
+
+  if (contactIndex === -1) {
+    return null;
+  }
+
+  const updatedContact = {
+    ...contactList[contactIndex],
+    ...data,
+  };
+
+  contactList[contactIndex] = updatedContact;
+
+  await fs.writeFile(
+    contactsPath,
+    JSON.stringify(contactList, null, 2),
+    "utf-8"
+  );
+  return updatedContact;
+};

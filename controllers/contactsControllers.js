@@ -1,9 +1,9 @@
-import fs from "fs/promises";
 import * as contactsService from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
 import {
   createContactSchema,
   updateContactSchema,
+  updateFavoriteSchema,
 } from "../schemas/contactSchemas.js";
 
 export const getAllContacts = async (_, res) => {
@@ -58,6 +58,24 @@ export const updateContact = async (req, res, next) => {
       throw HttpError(400, error.message);
     }
     const result = await contactsService.updateContact(id, req.body);
+    if (!result) {
+      throw HttpError(404);
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const changeFav = async (req, res, next) => {
+  try {
+    const { error } = updateFavoriteSchema.validate(req.body);
+    const { id } = req.params;
+    if (error) {
+      throw HttpError(400, error.message);
+    }
+    const result = await contactsService.changeFav(id, req.body);
     if (!result) {
       throw HttpError(404);
     }

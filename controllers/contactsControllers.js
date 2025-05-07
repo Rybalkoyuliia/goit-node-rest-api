@@ -4,7 +4,7 @@ import {
   createContactSchema,
   updateContactSchema,
   updateFavoriteSchema,
-} from "../schemas/contactSchemas.js";
+} from "../models/contactsSchema.js";
 
 export const getAllContacts = async (_, res) => {
   const responce = await contactsService.listContacts();

@@ -1,11 +1,12 @@
 import * as contactsService from "../services/contactsServices.js";
 import HttpError from "../helpers/HttpError.js";
+
+import ctrlWrapper from "../decorators/cntrWrapper.js";
 import {
   createContactSchema,
   updateContactSchema,
   updateFavoriteSchema,
-} from "../schemas/contactSchemas.js";
-import ctrlWrapper from "../decorators/cntrWrapper.js";
+} from "../models/contactsSchema.js";
 
 const getAllContacts = async (_, res) => {
   const fields = "-createdAt -updatedAt";
@@ -32,6 +33,11 @@ const deleteContact = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
+  const { error } = createContactSchema.validate(req.body);
+  if (error) {
+    throw HttpError(400, error.message);
+  }
+
   const result = await contactsService.addNewContact(req.body);
   res.status(201).json(result);
 };

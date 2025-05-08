@@ -1,30 +1,21 @@
 import path from "path";
-import { CONTACT_DB } from "../schemas/mngContactsSchema.js";
+import { CONTACT_DB } from "../models/Contact.js";
 
 export const contactsPath = path.resolve("db", "contacts.json");
 
-export const listContacts = async () => {
-  return await CONTACT_DB.find();
-};
+export const listContacts = ({ filter = {}, fields, settings = {} }) =>
+  CONTACT_DB.find(filter, fields, settings);
 
-export const findContactById = async (id) => {
-  return await CONTACT_DB.findOne({ _id: id });
-};
+export const findContactById = (id) => CONTACT_DB.findById(id);
 
-export const removeContactById = async (id) => {
-  return await CONTACT_DB.findByIdAndDelete(id);
-};
+export const removeContactById = (id) => CONTACT_DB.findByIdAndDelete(id);
 
-export const addNewContact = async (data) => {
-  return await CONTACT_DB.create(data);
-};
+export const addNewContact = (data) => CONTACT_DB.create(data);
 
-export const updateContact = async (id, data) => {
-  return await CONTACT_DB.findByIdAndUpdate({ _id: id }, data, { new: true });
-};
+export const updateContact = (id, data) =>
+  CONTACT_DB.findByIdAndUpdate(id, data);
 
-export const changeFav = async (id, data) => {
-  return await CONTACT_DB.findByIdAndUpdate({ _id: id }, data, {
+export const changeFav = (id, data) =>
+  CONTACT_DB.findByIdAndUpdate({ _id: id }, data, {
     new: true,
   });
-};

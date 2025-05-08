@@ -30,13 +30,8 @@ app.use((_, res, __) => {
 });
 
 app.use((err, _, res, __) => {
-  console.log(err.stack);
-  res.status(500).json({
-    status: "fail",
-    code: 500,
-    message: err.message,
-    data: "Internal Server Error",
-  });
+  const { status = 500, message = "Internal Server Error" } = err;
+  res.status(status).json({ message });
 });
 
 mongoose

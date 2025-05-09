@@ -1,5 +1,5 @@
 import path from "path";
-import { CONTACT_DB } from "../models/Contact.js";
+import { CONTACT_DB } from "../models/contactsSchema.js";
 
 export const contactsPath = path.resolve("db", "contacts.json");
 

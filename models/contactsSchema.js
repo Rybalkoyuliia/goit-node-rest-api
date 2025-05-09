@@ -1,7 +1,9 @@
 import { Schema, model } from "mongoose";
 import Joi from "joi";
+import emailPattern from "../constants/constants.js";
+import { handleSaveError, setUpdSettings } from "./hooks.js";
 
-const mngContactsSchema = new Schema(
+const contactSchema = new Schema(
   {
     name: {
       type: String,
@@ -9,6 +11,7 @@ const mngContactsSchema = new Schema(
     },
     email: {
       type: String,
+      match: emailPattern,
     },
     phone: {
       type: String,
@@ -21,8 +24,13 @@ const mngContactsSchema = new Schema(
   { versionKey: false, timestamps: true }
 );
 
-export const CONTACT_DB = model("contact", mngContactsSchema);
+contactSchema.pre("findOneAndUpdate", setUpdSettings);
 
+contactSchema.post("save", handleSaveError);
+
+contactSchema.post("findOneAndUpdate", handleSaveError);
+
+export const CONTACT_DB = model("contact", contactSchema);
 export const createContactSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),

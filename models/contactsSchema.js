@@ -20,6 +20,11 @@ const contactSchema = new Schema(
       type: Boolean,
       default: false,
     },
+    owner: {
+      type: Schema.Types.ObjectId,
+      required: true,
+      ref: "user",
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -31,6 +36,7 @@ contactSchema.post("save", handleSaveError);
 contactSchema.post("findOneAndUpdate", handleSaveError);
 
 export const CONTACT_DB = model("contact", contactSchema);
+
 export const createContactSchema = Joi.object({
   name: Joi.string().required(),
   email: Joi.string().required(),

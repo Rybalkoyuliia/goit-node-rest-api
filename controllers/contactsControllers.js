@@ -8,15 +8,26 @@ import {
   updateFavoriteSchema,
 } from "../models/contactsSchema.js";
 
-const getAllContacts = async (_, res) => {
+const getAllContacts = async (req, res) => {
   const fields = "-createdAt -updatedAt";
-  const responce = await contactsService.listContacts({ fields });
+  const { _id: owner } = req.user;
+  const filter = { owner };
+  const { page = 1, limit = 10 } = req.query;
+  const skip = (page - 1) * limit;
+  const settings = { skip, limit };
+  const responce = await contactsService.listContacts({
+    filter,
+    fields,
+    settings,
+  });
   res.json(responce);
 };
 
 const getOneContact = async (req, res) => {
-  const { id } = req.params;
-  const contact = await contactsService.findContactById(id);
+  const { id: _id } = req.params;
+  const { _id: owner } = req.user;
+
+  const contact = await contactsService.findContact({ owner, _id });
   if (!contact) {
     throw HttpError(404, `Contact with id "${id}" wasn't found`);
   }
@@ -25,7 +36,12 @@ const getOneContact = async (req, res) => {
 
 const deleteContact = async (req, res) => {
   const { id } = req.params;
-  const removedContact = await contactsService.removeContactById(id);
+  const { _id: owner } = req.user;
+
+  const removedContact = await contactsService.removeContact({
+    owner,
+    _id: id,
+  });
   if (!removedContact) {
     throw HttpError(404, `Contact with id "${id}" wasn't found`);
   }
@@ -33,11 +49,13 @@ const deleteContact = async (req, res) => {
 };
 
 const createContact = async (req, res) => {
+  const { _id: owner } = req.user;
   const { error } = createContactSchema.validate(req.body);
   if (error) {
     throw HttpError(400, error.message);
   }
-  const result = await contactsService.addNewContact(req.body);
+
+  const result = await contactsService.addNewContact({ ...req.body, owner });
   res.status(201).json(result);
 };
 
@@ -48,7 +66,12 @@ const updateContact = async (req, res) => {
   }
 
   const { id } = req.params;
-  const result = await contactsService.updateContact(id, req.body);
+  const { _id: owner } = req.user;
+
+  const result = await contactsService.updateContact(
+    { owner, _id: id },
+    req.body
+  );
 
   if (!result) {
     throw HttpError(404, "Contact not found");

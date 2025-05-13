@@ -2,11 +2,13 @@ import express from "express";
 
 import contactsController from "../controllers/contactsControllers.js";
 
-import { isBodyEmpty } from "../middlewares/isBodyEmpty.js";
-
+import isBodyEmpty from "../middlewares/isBodyEmpty.js";
 import isValid from "../middlewares/isValidId.js";
+import authenticate from "../middlewares/authenticate.js";
 
 const contactsRouter = express.Router();
+
+contactsRouter.use(authenticate);
 
 contactsRouter.get("/", contactsController.getAllContacts);
 
